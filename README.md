@@ -114,8 +114,3 @@ npm run start
 npm run lint
 ```
 
-## Notes
-
-- The frontend and backend are started separately.
-- The backend uses PostgreSQL, not MySQL.
-- Keep the existing UI and application features unchanged while developing.
