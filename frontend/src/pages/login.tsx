@@ -1,105 +1,89 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
-import { Role } from '../types';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { AuthShell } from '../components/auth/AuthShell';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { loginUser } from '../lib/auth';
+import { Role } from '../types';
+
 const roles: Role[] = ['Administrator', 'Project Manager', 'Team Member'];
 
 export default function LoginPage() {
-  const { login } = useAuth();
   const router = useRouter();
   const [role, setRole] = useState<Role>('Administrator');
-  const [email, setEmail] = useState('kasun@lankatech.lk');
-  const [password, setPassword] = useState('••••••••');
-  const handleSubmit = (e: React.FormEvent) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login(role);
-    router.push('/dashboard');
+    setLoading(true);
+    setError('');
+    try {
+      const data = await loginUser({ email, password, role });
+      toast.success(data.message || 'Signed in successfully.');
+      router.push(role === 'Administrator' ? '/dashboard' : role === 'Project Manager' ? '/dashboard' : '/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to sign in.');
+      toast.error(err instanceof Error ? err.message : 'Unable to sign in.');
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
-    <div className="min-h-screen w-full bg-bg flex items-center justify-center p-4">
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 12
-        }}
-        animate={{
-          opacity: 1,
-          y: 0
-        }}
-        className="w-full max-w-md">
-        
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="h-11 w-11 rounded-xl bg-accent flex items-center justify-center font-display font-bold text-black text-xl">
-            T
+    <AuthShell
+      title="Welcome back"
+      subtitle="Secure sign in to your workspace"
+      footer={
+        <div className="space-y-3">
+          <p className="text-sm text-secondary text-center">
+            Need an account?{' '}
+            <button onClick={() => router.push('/register')} className="text-accent font-medium hover:underline">Create one</button>
+          </p>
+          <p className="text-sm text-secondary text-center">
+            Forgot your password?{' '}
+            <button onClick={() => router.push('/forgot-password')} className="text-accent font-medium hover:underline">Reset it</button>
+          </p>
+        </div>
+      }
+    >
+      {error ? <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-500 mb-4">{error}</div> : null}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
+
+        <div className="relative">
+          <Input label="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
+          <button type="button" aria-label="Toggle password visibility" onClick={() => setShowPassword((value) => !value)} className="absolute right-3 top-9 text-secondary">
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+
+        <div>
+          <span className="block text-sm font-medium text-secondary mb-2">Access level</span>
+          <div className="grid grid-cols-3 gap-2">
+            {roles.map((roleOption) => (
+              <button
+                key={roleOption}
+                type="button"
+                onClick={() => setRole(roleOption)}
+                className={role === roleOption ? 'text-xs font-medium rounded-xl px-2 py-2.5 bg-accent text-black' : 'text-xs font-medium rounded-xl px-2 py-2.5 bg-bg border border-line text-secondary hover:border-accent'}
+              >
+                {roleOption === 'Project Manager' ? 'Project Manager' : roleOption === 'Team Member' ? 'Team Member' : 'Administrator'}
+              </button>
+            ))}
           </div>
-          <span className="font-display font-bold text-maintext text-2xl">
-            T LAB
-          </span>
         </div>
 
-        <div className="bg-card border border-line rounded-2xl p-7">
-          <h1 className="font-display text-xl font-bold text-maintext">
-            Welcome back
-          </h1>
-          <p className="text-sm text-secondary mt-1 mb-6">
-            Sign in to your workspace
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)} />
-            
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)} />
-            
-
-            <div>
-              <span className="block text-sm font-medium text-secondary mb-2">
-                Sign in as
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                {roles.map((r) =>
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRole(r)}
-                  className={
-                  role === r ?
-                  'text-xs font-medium rounded-xl px-2 py-2.5 bg-accent text-black' :
-                  'text-xs font-medium rounded-xl px-2 py-2.5 bg-bg border border-line text-secondary hover:border-accent'
-                  }>
-                  
-                    {r.split(' ')[0]}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full" size="lg">
-              Sign in
-            </Button>
-          </form>
-
-          <p className="text-sm text-secondary text-center mt-6">
-            No account?{' '}
-            <button
-              onClick={() => router.push('/register')}
-              className="text-accent font-medium hover:underline">
-              
-              Create one
-            </button>
-          </p>
-        </div>
-      </motion.div>
-    </div>
+        <Button type="submit" className="w-full" size="lg" disabled={loading}>
+          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Signing in</> : 'Sign in'}
+        </Button>
+      </form>
+    </AuthShell>
   );
 }
