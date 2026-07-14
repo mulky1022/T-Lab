@@ -137,3 +137,47 @@ Team Member:
   Email: member@tlab.com
   Password: Member@123
   Role: Team Member
+
+
+  Technology	Version	Purpose
+Next.js	14.2.15	React framework (Pages Router)
+React	18.3.1	UI library
+TypeScript	5.5.4	Type safety
+Tailwind CSS	3.4.17	Utility-first styling
+Framer Motion	11.5.4	Animations
+Lucide React	0.522.0	Icons
+Recharts	2.12.7	Charts/data visualization
+Sonner	2.0.1	Toast notifications
+PostCSS + Autoprefixer	—	CSS processing
+Google Fonts	—	Space Grotesk + Inter
+Backend
+Technology	Version	Purpose
+Laravel	13.8	PHP web framework
+PHP	8.3+	Server-side language
+Vite	8.0.0	Asset bundling
+Tailwind CSS	4.0.0	Backend styling
+JWT Auth	tymon/jwt-auth	Token authentication
+Laravel Permission	spatie/laravel-permission	RBAC
+Resend PHP SDK	1.5+	Transactional email
+GuzzleHTTP	—	HTTP client
+PHPUnit	12.5.12	Testing
+Mockery	1.6	Test mocking
+Laravel Pint	1.27	Code style fixer
+Concurrently	9.0.1	Run multiple dev commands
+Database
+Technology	Purpose
+PostgreSQL	Primary database
+Redis	Cache/queue driver
+Laravel Eloquent	ORM
+Laravel Migrations	Schema versioning
+DevOps & Tools
+Technology	Purpose
+Git	Version control
+Windows/PowerShell	Dev environment
+AWS S3	File storage (configured)
+Security
+JWT stateless API auth
+Bcrypt password hashing (12 rounds)
+OTP email verification (6-digit, 5-min expiry)
+CSRF protection, rate limiting, CORS
+This is a full-stack Laravel + Next.js application with PostgreSQL, JWT auth, and Tailwind CSS throughout.
