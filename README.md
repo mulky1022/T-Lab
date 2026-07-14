@@ -114,3 +114,26 @@ npm run start
 npm run lint
 ```
 
+Administrator 1:
+  Name: Nimal Perera
+  Email: admin1@tlab.com
+  Password: Admin@123
+  Role: Administrator
+
+Administrator 2:
+  Name: Kasun Fernando
+  Email: admin2@tlab.com
+  Password: Admin@123
+  Role: Administrator
+
+Project Manager:
+  Name: Chamith Jayasinghe
+  Email: manager@tlab.com
+  Password: Manager@123
+  Role: Project Manager
+
+Team Member:
+  Name: Sahan Wickramasinghe
+  Email: member@tlab.com
+  Password: Member@123
+  Role: Team Member
