@@ -25,7 +25,7 @@ async function request(path: string, options: RequestInit = {}, auth = false) {
   return data;
 }
 
-export async function loginUser(payload: { email: string; password: string; role: string; remember_me?: boolean }) {
+export async function loginUser(payload: { email: string; password: string; remember_me?: boolean }) {
   const data = await request('/login', { method: 'POST', body: JSON.stringify(payload) });
   if (typeof window !== 'undefined' && data.token) {
     localStorage.setItem('auth_token', data.token);

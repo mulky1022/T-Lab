@@ -6,13 +6,9 @@ import { AuthShell } from '../components/auth/AuthShell';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { loginUser } from '../lib/auth';
-import { Role } from '../types';
-
-const roles: Role[] = ['Administrator', 'Project Manager', 'Team Member'];
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = useState<Role>('Administrator');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,9 +21,10 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const data = await loginUser({ email, password, role, remember_me: rememberMe });
+      const data = await loginUser({ email, password, remember_me: rememberMe });
       toast.success(data.message || 'Signed in successfully.');
-      router.push(role === 'Administrator' ? '/dashboard' : role === 'Project Manager' ? '/dashboard' : '/dashboard');
+      const redirectPath = data.user?.role === 'Administrator' ? '/admin/dashboard' : data.user?.role === 'Project Manager' ? '/manager/dashboard' : '/team/dashboard';
+      router.push(redirectPath);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to sign in.');
       toast.error(err instanceof Error ? err.message : 'Unable to sign in.');
@@ -76,21 +73,6 @@ export default function LoginPage() {
             Remember me
           </label>
           <span className="text-xs text-muted-foreground">Keep me signed in for 7 days</span>
-        </div>
-        <div>
-          <span className="block text-sm font-medium text-secondary mb-2">Access level</span>
-          <div className="grid grid-cols-3 gap-2">
-            {roles.map((roleOption) => (
-              <button
-                key={roleOption}
-                type="button"
-                onClick={() => setRole(roleOption)}
-                className={role === roleOption ? 'text-xs font-medium rounded-xl px-2 py-2.5 bg-accent text-black' : 'text-xs font-medium rounded-xl px-2 py-2.5 bg-bg border border-line text-secondary hover:border-accent'}
-              >
-                {roleOption === 'Project Manager' ? 'Project Manager' : roleOption === 'Team Member' ? 'Team Member' : 'Administrator'}
-              </button>
-            ))}
-          </div>
         </div>
 
         <Button type="submit" className="w-full" size="lg" disabled={loading}>

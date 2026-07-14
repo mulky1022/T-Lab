@@ -46,4 +46,14 @@ class AuthFlowTest extends TestCase
         $response->assertJsonStructure(['message', 'token', 'user']);
         $this->assertSame($user->email, $response->json('user.email'));
     }
+
+    public function test_forgot_password_request_returns_success_message(): void
+    {
+        $response = $this->postJson('/api/forgot-password/request-otp', [
+            'email' => 'reset@example.com',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('message', 'If an account with this email exists, a verification code has been sent.');
+    }
 }
