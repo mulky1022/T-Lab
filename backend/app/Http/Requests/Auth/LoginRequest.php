@@ -16,7 +16,6 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
-            'role' => ['required', 'in:Administrator,Project Manager,Team Member'],
             'remember_me' => ['sometimes', 'boolean'],
         ];
     }
