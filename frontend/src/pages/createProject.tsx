@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
+import { createProject } from '../lib/api';
 import { ProjectStatus } from '../types';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Card } from '../components/ui/Card';
@@ -50,33 +51,33 @@ export function CreateProject() {
     setErrors(e);
     return Object.keys(e).length === 0;
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     setSaving(true);
-    setTimeout(() => {
-      setProjects((ps) => [
-      ...ps,
-      {
-        id: `p${Date.now()}`,
+    try {
+      const payload = {
         name: form.name,
         description: form.description,
-        status: form.status,
-        managerId: currentUser?.id || 'u2',
-        memberIds: [currentUser?.id || 'u2', ...selected],
+        manager_id: currentUser?.id,
+        member_ids: [currentUser?.id, ...selected].filter(Boolean),
         budget: form.budget || 'TBC',
-        startDate: form.start,
-        endDate: form.end,
-        createdDate: '2026-07-11',
-        updatedDate: '2026-07-11',
+        status: form.status,
+        start_date: form.start,
+        end_date: form.end,
         milestones: [],
         sprints: []
-      }]
-      );
-      setSaving(false);
+      };
+      const project = await createProject(payload);
+      setProjects((ps) => [...ps, project]);
       toast.success('Project created successfully');
       router.push('/projects');
-    }, 800);
+    } catch (error) {
+      toast.error('Unable to create project.');
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
   };
   return (
     <div className="max-w-2xl">

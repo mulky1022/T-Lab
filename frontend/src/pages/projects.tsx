@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Plus, FolderKanban, Calendar } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
+import { getProjects } from '../lib/api';
 import { projectProgressFrom } from '../lib/projectUtils';
 import { formatDate, cn } from '../lib/utils';
 import { PageHeader } from '../components/ui/PageHeader';
@@ -35,6 +36,31 @@ export function Projects() {
   currentUser?.role === 'Project Manager' ||
   currentUser?.role === 'Administrator';
   const isMember = currentUser?.role === 'Team Member';
+  const [fetching, setFetching] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setFetching(true);
+    getProjects({
+      search: query,
+      status: status === 'All' ? undefined : status,
+      perPage: 100
+    })
+      .then((res) => {
+        if (!isMounted) return;
+        if (res && res.data) setProjects(res.data);
+      })
+      .catch((error) => {
+        console.error('Failed to load projects', error);
+      })
+      .finally(() => {
+        if (isMounted) setFetching(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [query, status, setProjects]);
+
   let list = isMember ?
   projects.filter((p) => p.memberIds.includes(currentUser!.id)) :
   projects;
@@ -85,7 +111,7 @@ export function Projects() {
         </div>
       </div>
 
-      {loading ?
+      {loading || fetching ?
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {[1, 2, 3, 4, 5, 6].map((i) =>
         <CardSkeleton key={i} />

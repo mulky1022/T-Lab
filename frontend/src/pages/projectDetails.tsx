@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
@@ -11,6 +11,7 @@ import {
   Zap } from
 'lucide-react';
 import { useData } from '../context/DataContext';
+import { getProject } from '../lib/api';
 import { projectProgressFrom, taskCounts } from '../lib/projectUtils';
 import { formatDate } from '../lib/utils';
 import { PageHeader } from '../components/ui/PageHeader';
@@ -36,9 +37,28 @@ const tabList = ['Overview', 'Tasks', 'Milestones', 'Timeline', 'Team'];
 export function ProjectDetails() {
   const router = useRouter();
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
-  const { projects, users, tasks } = useData();
+  const { users, tasks } = useData();
+  const [project, setProject] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('Overview');
-  const project = projects.find((p) => p.id === id);
+
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    getProject(id)
+      .then((data) => setProject(data))
+      .catch(() => setProject(null))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Card>
+        <p className="p-6 text-center text-secondary">Loading project...</p>
+      </Card>
+    );
+  }
+
   if (!project) {
     return (
       <Card>
