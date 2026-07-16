@@ -29,7 +29,7 @@ class AiAssistantController extends Controller
         $systemPrompt = $this->buildSystemPrompt($user);
         $context = $this->buildContextPayload($user, $projects, $tasks);
 
-        $apiKey = env('OPENROUTER_API_KEY');
+        $apiKey = env('OPENROUTER_API_KEY') ?: config('services.openrouter.api_key');
         if (empty($apiKey)) {
             return response()->json(['message' => 'The AI assistant is not configured yet.'], 500);
         }
@@ -39,7 +39,7 @@ class AiAssistantController extends Controller
                 ->withOptions(['verify' => false])
                 ->withHeaders([
                     'Authorization' => 'Bearer ' . $apiKey,
-                    'HTTP-Referer' => config('app.url', 'http://localhost'),
+                    'HTTP-Referer' => config('app.url') ?: env('APP_URL', ''),
                     'X-Title' => 'T Lab',
                     'Accept' => 'application/json',
                 ])
@@ -132,6 +132,19 @@ class AiAssistantController extends Controller
         );
     }
 
+    private function formatDateValue($value): ?string
+    {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d');
+        }
+
+        if (is_string($value) && $value !== '') {
+            return date('Y-m-d', strtotime($value));
+        }
+
+        return null;
+    }
+
     private function buildContextPayload(User $user, $projects, $tasks): string
     {
         $projectContext = $projects->map(function (Project $project) use ($user) {
@@ -154,7 +167,7 @@ class AiAssistantController extends Controller
                 'status' => $task->status,
                 'priority' => $task->priority,
                 'assignee_id' => $task->assignee_id,
-                'due_date' => $task->due_date ? (is_string($task->due_date) ? $task->due_date : $task->due_date->toDateString()) : null,
+                'due_date' => $this->formatDateValue($task->due_date),
             ];
         })->values()->all();
 

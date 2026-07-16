@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
 
 async function request(path: string, options: RequestInit = {}, auth = false) {
   const headers: Record<string, string> = {
@@ -11,7 +11,7 @@ async function request(path: string, options: RequestInit = {}, auth = false) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}/api${path}`, {
+  const response = await fetch(API_URL ? `${API_URL}/api${path}` : `/api${path}`, {
     ...options,
     headers,
     credentials: 'include',
