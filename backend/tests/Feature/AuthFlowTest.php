@@ -108,7 +108,7 @@ class AuthFlowTest extends TestCase
 
         $this->withAuthenticatedUser($admin)->getJson('/api/projects')->assertStatus(200);
         $this->withAuthenticatedUser($manager)->getJson('/api/projects')->assertStatus(200);
-        $this->withAuthenticatedUser($member)->getJson('/api/projects')->assertStatus(403);
+        $this->withAuthenticatedUser($member)->getJson('/api/projects')->assertStatus(200);
     }
 
     public function test_forgot_password_request_returns_success_message(): void

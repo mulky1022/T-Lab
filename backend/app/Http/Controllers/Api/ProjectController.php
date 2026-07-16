@@ -12,9 +12,12 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        $this->ensureAllowedRole($request->user());
+        $this->ensureAllowedRole($request->user(), 'read');
 
         $query = Project::query();
+        if ($request->user()?->role === 'Team Member') {
+            $query->whereJsonContains('member_ids', $request->user()->id);
+        }
         if ($request->has('search')) {
             $s = $request->get('search');
             $query->where('name', 'ilike', "%{$s}%");
@@ -30,15 +33,20 @@ class ProjectController extends Controller
 
     public function show(Request $request, $id)
     {
-        $this->ensureAllowedRole($request->user());
+        $this->ensureAllowedRole($request->user(), 'read');
 
-        $project = Project::with(['tasks','manager'])->findOrFail($id);
+        $query = Project::query();
+        if ($request->user()?->role === 'Team Member') {
+            $query->whereJsonContains('member_ids', $request->user()->id);
+        }
+
+        $project = $query->with(['tasks','manager'])->findOrFail($id);
         return response()->json($project);
     }
 
     public function store(Request $request)
     {
-        $this->ensureAllowedRole($request->user());
+        $this->ensureAllowedRole($request->user(), 'write');
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -81,7 +89,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->ensureAllowedRole($request->user());
+        $this->ensureAllowedRole($request->user(), 'write');
 
         $project = Project::findOrFail($id);
         $data = $request->validate([
@@ -115,7 +123,7 @@ class ProjectController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        $this->ensureAllowedRole($request->user());
+        $this->ensureAllowedRole($request->user(), 'write');
 
         $project = Project::findOrFail($id);
 
@@ -132,8 +140,12 @@ class ProjectController extends Controller
         });
     }
 
-    private function ensureAllowedRole($user): void
+    private function ensureAllowedRole($user, string $operation = 'write'): void
     {
+        if ($user?->role === 'Team Member' && in_array($operation, ['read'], true)) {
+            return;
+        }
+
         if (!in_array($user?->role, ['Administrator', 'Project Manager'], true)) {
             abort(response()->json(['message' => 'Forbidden.'], 403));
         }
