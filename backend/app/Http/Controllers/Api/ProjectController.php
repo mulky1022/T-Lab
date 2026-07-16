@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Api;
 
@@ -12,27 +12,33 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
+        $this->ensureAllowedRole($request->user());
+
         $query = Project::query();
         if ($request->has('search')) {
             $s = $request->get('search');
             $query->where('name', 'ilike', "%{$s}%");
         }
         if ($request->has('status') && $request->get('status') !== 'All') {
-            $query->where('status', $request->get('status'));
+            $status = strtolower($request->get('status'));
+            $query->whereRaw('lower(status) = ?', [$status]);
         }
         $perPage = intval($request->get('perPage', 100));
         $projects = $query->orderBy('created_at','desc')->paginate($perPage);
         return response()->json($projects);
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $this->ensureAllowedRole($request->user());
+
         $project = Project::with(['tasks','manager'])->findOrFail($id);
         return response()->json($project);
     }
 
     public function store(Request $request)
     {
+        $this->ensureAllowedRole($request->user());
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -75,6 +81,8 @@ class ProjectController extends Controller
 
     public function update(Request $request, $id)
     {
+        $this->ensureAllowedRole($request->user());
+
         $project = Project::findOrFail($id);
         $data = $request->validate([
             'name' => 'sometimes|required|string|max:255',
@@ -107,6 +115,8 @@ class ProjectController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        $this->ensureAllowedRole($request->user());
+
         $project = Project::findOrFail($id);
 
         return DB::transaction(function () use ($project, $request) {
@@ -120,5 +130,12 @@ class ProjectController extends Controller
             ]);
             return response()->json(['message' => 'deleted']);
         });
+    }
+
+    private function ensureAllowedRole($user): void
+    {
+        if (!in_array($user?->role, ['Administrator', 'Project Manager'], true)) {
+            abort(response()->json(['message' => 'Forbidden.'], 403));
+        }
     }
 }

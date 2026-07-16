@@ -122,10 +122,14 @@ export function Dashboard() {
     completed: 24 + counts.completed
   }];
 
-  const upcoming = [...myTasks].
-  filter((t) => t.status !== 'Completed').
-  sort((a, b) => a.dueDate.localeCompare(b.dueDate)).
-  slice(0, 5);
+  const upcoming = [...myTasks]
+    .filter((t) => t.status !== 'Completed')
+    .sort((a, b) => {
+      const aTime = a.dueDate ? Date.parse(a.dueDate) : Infinity;
+      const bTime = b.dueDate ? Date.parse(b.dueDate) : Infinity;
+      return aTime - bTime;
+    })
+    .slice(0, 5);
   const workload = useMemo(() => {
     const members = users.filter(
       (u) => u.role === 'Team Member' && u.status === 'Active'

@@ -12,6 +12,10 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->user()?->role !== 'Administrator') {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $query = User::query();
         if ($request->has('search')) {
             $s = $request->get('search');
@@ -22,14 +26,23 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $currentUser = $request->user();
+        if ($currentUser?->role !== 'Administrator' && $currentUser?->id != $id) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $user = User::findOrFail($id);
         return response()->json($user);
     }
 
     public function store(Request $request)
     {
+        if ($request->user()?->role !== 'Administrator') {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -52,6 +65,11 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+        $currentUser = $request->user();
+        if ($currentUser?->role !== 'Administrator' && $currentUser?->id != $id) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $user = User::findOrFail($id);
         $data = $request->validate([
             'name' => 'sometimes|required|string|max:255',
@@ -81,6 +99,10 @@ class UserController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        if ($request->user()?->role !== 'Administrator') {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $user = User::findOrFail($id);
         return DB::transaction(function () use ($user, $request) {
             $user->delete();

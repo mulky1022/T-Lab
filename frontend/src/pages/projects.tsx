@@ -27,7 +27,8 @@ const statusFilters: (ProjectStatus | 'All')[] = [
 
 export function Projects() {
   const { currentUser } = useAuth();
-  const { projects, users, tasks } = useData();
+  const data = useData();
+  const { projects, users, tasks, setProjects } = data;
   const router = useRouter();
   const loading = useSimulatedLoading(500);
   const [query, setQuery] = useState('');

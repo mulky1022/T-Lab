@@ -17,6 +17,11 @@ class Task extends Model
         'assignee_id',
         'status',
         'priority',
+        'due_date',
+    ];
+
+    protected $casts = [
+        'due_date' => 'date:Y-m-d',
     ];
 
     public function project()

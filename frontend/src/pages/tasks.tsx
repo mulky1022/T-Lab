@@ -4,6 +4,7 @@ import { Plus, CheckSquare, ArrowUpDown, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
+import { createTask as createTaskApi, deleteTask as deleteTaskApi } from '../lib/api';
 import { TaskStatus, TaskPriority } from '../types';
 import { formatDate, cn } from '../lib/utils';
 import { PageHeader } from '../components/ui/PageHeader';
@@ -116,52 +117,50 @@ export function Tasks() {
     setErrors(e);
     return Object.keys(e).length === 0;
   };
-  const createTask = () => {
+  const createTask = async () => {
     if (!validate()) return;
     setSaving(true);
-    setTimeout(() => {
-      setTasks((ts) => [
-      ...ts,
-      {
-        id: `t${Date.now()}`,
+    try {
+      const priorityMap: Record<string, number> = { Low: 1, Medium: 2, High: 3, Urgent: 4 };
+      const payload = {
+        project_id: form.projectId,
         title: form.title,
         description: form.description,
-        assigneeId: form.assigneeId,
-        projectId: form.projectId,
-        status: 'Todo',
-        priority: form.priority,
-        dueDate: form.dueDate,
-        estimatedHours: 8,
-        actualHours: 0,
-        comments: [],
-        attachments: [],
-        activity: [
-        {
-          id: `act${Date.now()}`,
-          actorId: currentUser?.id || 'u2',
-          text: 'created this task',
-          timestamp: 'Just now'
-        }]
-
-      }]
-      );
-      setSaving(false);
+        assignee_id: form.assigneeId,
+        priority: priorityMap[form.priority] ?? 2,
+        due_date: form.dueDate
+      };
+      const task = await createTaskApi(payload);
+      setTasks((ts) => [task, ...ts]);
       setModalOpen(false);
       setForm({
         title: '',
         description: '',
-        assigneeId: 'u3',
-        projectId: 'p1',
+        assigneeId: users.find(u => u.role !== 'Administrator')?.id || '',
+        projectId: projects[0]?.id || '',
         priority: 'Medium',
         dueDate: ''
       });
       toast.success('Task created successfully');
-    }, 700);
+    } catch (err) {
+      console.error('Failed to create task', err);
+      toast.error('Unable to create task');
+    } finally {
+      setSaving(false);
+    }
   };
-  const deleteTask = () => {
+  const deleteTask = async () => {
     if (!deleteId) return;
-    setTasks((ts) => ts.filter((t) => t.id !== deleteId));
-    toast.success('Task deleted');
+    try {
+      await deleteTaskApi(deleteId);
+      setTasks((ts) => ts.filter((t) => t.id !== deleteId));
+      toast.success('Task deleted');
+    } catch (err) {
+      console.error('Failed to delete task', err);
+      toast.error('Unable to delete task');
+    } finally {
+      setDeleteId(null);
+    }
   };
   return (
     <div>

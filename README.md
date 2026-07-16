@@ -181,3 +181,15 @@ Bcrypt password hashing (12 rounds)
 OTP email verification (6-digit, 5-min expiry)
 CSRF protection, rate limiting, CORS
 This is a full-stack Laravel + Next.js application with PostgreSQL, JWT auth, and Tailwind CSS throughout.
+
+
+cd backend
+composer install
+copy .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+
+cd ../frontend
+npm install
+npm run dev

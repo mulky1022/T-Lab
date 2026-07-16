@@ -15,6 +15,7 @@ import { getProject } from '../lib/api';
 import { projectProgressFrom, taskCounts } from '../lib/projectUtils';
 import { formatDate } from '../lib/utils';
 import { PageHeader } from '../components/ui/PageHeader';
+import { Project } from '../types';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { Avatar } from '../components/ui/Avatar';
@@ -38,7 +39,7 @@ export function ProjectDetails() {
   const router = useRouter();
   const id = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
   const { users, tasks } = useData();
-  const [project, setProject] = useState<any | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('Overview');
 
@@ -79,16 +80,16 @@ export function ProjectDetails() {
   const pTasks = tasks.filter((t) => t.projectId === project.id);
   const counts = taskCounts(pTasks);
   const progress = projectProgressFrom(tasks, project.id);
-  const milestonesDone = project.milestones.filter((m) => m.completed).length;
+  const milestonesDone = project.milestones.filter((m: any) => m.completed).length;
   const timelineItems = [
-  ...project.milestones.map((m) => ({
+  ...project.milestones.map((m: any) => ({
     id: m.id,
     type: 'Milestone' as const,
     name: m.name,
     date: m.dueDate,
     done: m.completed
   })),
-  ...project.sprints.map((s) => ({
+  ...project.sprints.map((s: any) => ({
     id: s.id,
     type: 'Sprint' as const,
     name: `${s.name} — ${s.goal}`,
@@ -110,7 +111,7 @@ export function ProjectDetails() {
         subtitle={project.description}
         action={
         <div className="flex items-center gap-2">
-            <Badge variant={statusVariant[project.status]}>
+            <Badge variant={statusVariant[project.status as ProjectStatus]}>
               {project.status}
             </Badge>
             <Badge variant="accent">{progress}% complete</Badge>
@@ -168,7 +169,7 @@ export function ProjectDetails() {
                 </p>
             }
               <div className="space-y-3">
-                {project.sprints.map((s) =>
+                {project.sprints.map((s: any) =>
               <div
                 key={s.id}
                 className="p-4 rounded-xl bg-bg border border-line">
@@ -296,7 +297,7 @@ export function ProjectDetails() {
 
         }
           <div className="space-y-4">
-            {project.milestones.map((m) =>
+            {project.milestones.map((m: any) =>
           <div
             key={m.id}
             className="flex items-center gap-4 p-4 rounded-xl bg-bg border border-line">

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthFlowTest extends TestCase
 {
@@ -47,6 +48,69 @@ class AuthFlowTest extends TestCase
         $this->assertSame($user->email, $response->json('user.email'));
     }
 
+    public function test_login_issues_a_jwt_with_the_user_role_claim_for_each_role(): void
+    {
+        foreach (['Administrator', 'Project Manager', 'Team Member'] as $role) {
+            $user = User::factory()->create([
+                'name' => "$role User",
+                'email' => strtolower(str_replace(' ', '.', $role)) . '@example.com',
+                'password' => Hash::make('StrongPass1!'),
+                'role' => $role,
+                'status' => 'Active',
+                'email_verified_at' => now(),
+            ]);
+
+            $response = $this->postJson('/api/login', [
+                'email' => $user->email,
+                'password' => 'StrongPass1!',
+            ]);
+
+            $response->assertStatus(200)
+                ->assertJsonPath('user.role', $role);
+
+            $payload = JWTAuth::setToken($response->json('token'))->getPayload();
+            $this->assertSame($role, $payload->get('role'));
+        }
+    }
+
+    public function test_role_specific_routes_reject_wrong_roles(): void
+    {
+        $admin = User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin.role@example.com',
+            'password' => Hash::make('StrongPass1!'),
+            'role' => 'Administrator',
+            'status' => 'Active',
+            'email_verified_at' => now(),
+        ]);
+
+        $manager = User::factory()->create([
+            'name' => 'Manager User',
+            'email' => 'manager.role@example.com',
+            'password' => Hash::make('StrongPass1!'),
+            'role' => 'Project Manager',
+            'status' => 'Active',
+            'email_verified_at' => now(),
+        ]);
+
+        $member = User::factory()->create([
+            'name' => 'Member User',
+            'email' => 'member.role@example.com',
+            'password' => Hash::make('StrongPass1!'),
+            'role' => 'Team Member',
+            'status' => 'Active',
+            'email_verified_at' => now(),
+        ]);
+
+        $this->withAuthenticatedUser($admin)->getJson('/api/users')->assertStatus(200);
+        $this->withAuthenticatedUser($manager)->getJson('/api/users')->assertStatus(403);
+        $this->withAuthenticatedUser($member)->getJson('/api/users')->assertStatus(403);
+
+        $this->withAuthenticatedUser($admin)->getJson('/api/projects')->assertStatus(200);
+        $this->withAuthenticatedUser($manager)->getJson('/api/projects')->assertStatus(200);
+        $this->withAuthenticatedUser($member)->getJson('/api/projects')->assertStatus(403);
+    }
+
     public function test_forgot_password_request_returns_success_message(): void
     {
         $response = $this->postJson('/api/forgot-password/request-otp', [
@@ -55,5 +119,12 @@ class AuthFlowTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonPath('message', 'If an account with this email exists, a verification code has been sent.');
+    }
+
+    private function withAuthenticatedUser(User $user)
+    {
+        $token = JWTAuth::fromUser($user);
+
+        return $this->withHeader('Authorization', 'Bearer ' . $token);
     }
 }
