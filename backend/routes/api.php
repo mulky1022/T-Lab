@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AiAssistantController;
 
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/register/request-otp', [AuthController::class, 'requestOtp'])->middleware('throttle:5,1');
@@ -33,4 +34,5 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::post('notifications/read-all', [NotificationController::class, 'markAllRead']);
 
     Route::get('audit-logs', [AuditLogController::class, 'index']);
+    Route::post('ai-assistant/chat', [AiAssistantController::class, 'chat']);
 });

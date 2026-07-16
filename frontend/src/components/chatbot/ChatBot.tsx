@@ -3,21 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, X, Send, Sparkles, Maximize2, Minimize2 } from 'lucide-react';
 import { ChatMessage } from '../../types';
 import { useAuth } from '../../context/AuthContext';
-import { useData } from '../../context/DataContext';
-import { taskCounts } from '../../lib/projectUtils';
 import { cn } from '../../lib/utils';
+import { request } from '../../lib/api';
 const suggestions = [
-'Summarize this project',
+'Summarize my projects',
 'Summarize my tasks',
-'Give team progress summary',
-'Project risk summary',
-'Deadline prediction',
-'Workload summary',
-'Productivity insights'];
+'What is my workload?',
+'What is at risk?',
+'What changed recently?'];
 
 export function ChatBot() {
   const { currentUser } = useAuth();
-  const { tasks, projects, users, auditLogs } = useData();
   const [open, setOpen] = useState(false);
   const [large, setLarge] = useState(false);
   const [input, setInput] = useState('');
@@ -35,66 +31,7 @@ export function ChatBot() {
       behavior: 'smooth'
     });
   }, [messages, loading]);
-  const generateReply = (text: string): string => {
-    const q = text.toLowerCase();
-    if (q.includes('risk')) {
-      const overdueSoon = tasks.filter(
-        (t) => t.status !== 'Completed' && t.dueDate <= '2026-07-20'
-      );
-      const urgent = tasks.filter(
-        (t) => t.priority === 'Urgent' && t.status !== 'Completed'
-      );
-      return `Project risk summary\n\n⚠ ${urgent.length} urgent tasks are still open — including "${urgent[0]?.title}".\n⏰ ${overdueSoon.length} tasks are due within the next 10 days.\n\nHighest risk: Smart Colombo — the citizen portal payment flow is urgent and due July 18.\nLanka HR System's EPF/ETF engine must pass compliance review on July 22.\n\nRecommendation: rebalance work from Tharindu Silva and Dinithi Perera before next sprint.`;
-    }
-    if (q.includes('deadline') || q.includes('predict')) {
-      return `Deadline prediction\n\nBased on current velocity:\n\n• Smart Colombo — Citizen portal beta likely lands Aug 4 (5 days late). Consider moving the feedback widget to a later sprint.\n• Lanka HR System — EPF/ETF module on track for July 20.\n• National Education Platform — teacher onboarding trending 3 days early.\n\nOverall on-time delivery confidence: 78%.`;
-    }
-    if (q.includes('workload')) {
-      const members = users.filter(
-        (u) => u.role === 'Team Member' && u.status === 'Active'
-      );
-      const lines = members.
-      map((m) => ({
-        m,
-        n: tasks.filter(
-          (t) => t.assigneeId === m.id && t.status !== 'Completed'
-        ).length
-      })).
-      sort((a, b) => b.n - a.n).
-      slice(0, 5).
-      map(({ m, n }) => `• ${m.name} (${m.city}): ${n} open tasks`).
-      join('\n');
-      return `Workload summary\n\n${lines}\n\nRuwan Wickramasinghe and Lahiru Bandara are carrying the heaviest load. Sachini Jayasinghe has capacity for one more design task.`;
-    }
-    if (q.includes('approval') || q.includes('pending')) {
-      const review = tasks.filter((t) => t.status === 'Review');
-      return `Pending approvals\n\n${review.length} tasks are waiting in Review:\n\n${review.map((t) => `• ${t.title} — ${users.find((u) => u.id === t.assigneeId)?.name}`).join('\n')}\n\nOldest item has been in Review for 2 days. Nadeesha Fernando and Yasiru Gunawardena are the approvers.`;
-    }
-    if (q.includes('recent') || q.includes('changes')) {
-      const recent = auditLogs.slice(0, 5);
-      return `Recent changes\n\n${recent.map((l) => `• ${users.find((u) => u.id === l.actorId)?.name}: ${l.action} — ${l.target}`).join('\n')}\n\nActivity is concentrated on Smart Colombo and Lanka HR System this week.`;
-    }
-    if (q.includes('productivity') || q.includes('insight')) {
-      const c = taskCounts(tasks);
-      return `Productivity insights\n\n📈 Completion rate: ${Math.round(c.completed / c.total * 100)}% across ${c.total} tasks.\n🔥 Best performing project: Ceylon Pay Gateway (100% complete).\n🕐 Average actual vs estimated hours: +8% over estimate.\n\nTip: tasks estimated over 30 hours run late 2× more often — consider splitting the offline lesson sync work.`;
-    }
-    if (q.includes('project')) {
-      const p = projects[0];
-      const c = taskCounts(tasks.filter((t) => t.projectId === p.id));
-      return `Project overview — ${p.name}\n\n${p.description}\n\nStatus: ${p.status} · Manager: ${users.find((u) => u.id === p.managerId)?.name}\nProgress: ${Math.round(c.completed / Math.max(1, c.total) * 100)}% complete\nCompleted: ${c.completed} · In review: ${c.review} · Pending: ${c.todo + c.inProgress}\n\nImportant update: sensor integration shipped; the payment flow is the current priority.`;
-    }
-    if (q.includes('my task') || q.includes('task') && !q.includes('team')) {
-      const mine = tasks.filter((t) => t.assigneeId === currentUser?.id);
-      const c = taskCounts(mine);
-      return `Your task summary\n\nAssigned tasks: ${c.total}\nCompleted: ${c.completed}\nIn review: ${c.review}\nIn progress: ${c.inProgress}\nTo do: ${c.todo}\n\nNext up: focus on in-progress items before their due dates.`;
-    }
-    if (q.includes('team')) {
-      const c = taskCounts(tasks);
-      return `Team progress summary\n\nActivity across all projects is steady.\nCompleted work: ${c.completed} tasks\nIn review: ${c.review} tasks\nRemaining: ${c.todo + c.inProgress} tasks.\n\nThe team is trending toward on-time delivery across Colombo, Kandy, and Jaffna initiatives.`;
-    }
-    return `I can help with summaries and insights. Try: "Project risk summary", "Deadline prediction", "Workload summary", "Pending approvals", "Recent changes", or "Productivity insights".`;
-  };
-  const send = (text: string) => {
+  const send = async (text: string) => {
     if (!text.trim() || loading) return;
     const userMsg: ChatMessage = {
       id: `u${Date.now()}`,
@@ -104,18 +41,34 @@ export function ChatBot() {
     setMessages((m) => [...m, userMsg]);
     setInput('');
     setLoading(true);
-    setTimeout(() => {
-      const reply = generateReply(text);
+
+    try {
+      const data = await request('/ai-assistant/chat', {
+        method: 'POST',
+        body: JSON.stringify({ message: text }),
+      }, true);
+
       setMessages((m) => [
-      ...m,
-      {
-        id: `a${Date.now()}`,
-        role: 'assistant',
-        content: reply
-      }]
-      );
+        ...m,
+        {
+          id: `a${Date.now()}`,
+          role: 'assistant' as const,
+          content: data.reply || data.message || "I don't have information about that"
+        }
+      ]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to contact the assistant.';
+      setMessages((m) => [
+        ...m,
+        {
+          id: `a${Date.now()}`,
+          role: 'assistant' as const,
+          content: `Sorry, I couldn't reach the assistant. ${message}`
+        }
+      ]);
+    } finally {
       setLoading(false);
-    }, 1100);
+    }
   };
   return (
     <>

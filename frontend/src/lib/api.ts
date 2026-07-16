@@ -1,6 +1,6 @@
 ﻿const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
-async function request(path: string, options: RequestInit = {}, auth = false) {
+export async function request(path: string, options: RequestInit = {}, auth = false) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string> | undefined),

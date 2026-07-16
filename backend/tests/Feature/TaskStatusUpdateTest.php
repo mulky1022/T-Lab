@@ -126,6 +126,75 @@ class TaskStatusUpdateTest extends TestCase
         $this->assertSame('Todo', $task->fresh()->status);
     }
 
+    public function test_task_api_exposes_frontend_friendly_fields_for_the_project_flow(): void
+    {
+        $manager = User::factory()->create([
+            'name' => 'Manager Flow',
+            'email' => 'manager.flow@example.com',
+            'password' => Hash::make('StrongPass1!'),
+            'role' => 'Project Manager',
+            'status' => 'Active',
+            'email_verified_at' => now(),
+        ]);
+
+        $member = User::factory()->create([
+            'name' => 'Member Flow',
+            'email' => 'member.flow@example.com',
+            'password' => Hash::make('StrongPass1!'),
+            'role' => 'Team Member',
+            'status' => 'Active',
+            'email_verified_at' => now(),
+        ]);
+
+        $admin = User::factory()->create([
+            'name' => 'Admin Flow',
+            'email' => 'admin.flow@example.com',
+            'password' => Hash::make('StrongPass1!'),
+            'role' => 'Administrator',
+            'status' => 'Active',
+            'email_verified_at' => now(),
+        ]);
+
+        $project = Project::create([
+            'name' => 'Flow Project',
+            'description' => 'For task flow tests',
+            'manager_id' => $manager->id,
+            'member_ids' => [$member->id],
+            'budget' => '400',
+            'status' => 'Active',
+            'start_date' => '2026-07-01',
+            'end_date' => '2026-07-31',
+        ]);
+
+        $task = Task::create([
+            'project_id' => $project->id,
+            'title' => 'Flow task',
+            'description' => 'Should be visible and updatable',
+            'assignee_id' => $member->id,
+            'status' => 'Todo',
+            'priority' => 3,
+            'due_date' => '2026-07-15',
+        ]);
+
+        $memberResponse = $this->withAuthenticatedUser($member)->getJson('/api/tasks');
+        $memberResponse->assertStatus(200)
+            ->assertJsonPath('data.0.projectId', $project->id)
+            ->assertJsonPath('data.0.assigneeId', $member->id)
+            ->assertJsonPath('data.0.dueDate', '2026-07-15');
+
+        $this->withAuthenticatedUser($member)->putJson('/api/tasks/' . $task->id, [
+            'status' => 'In Progress',
+        ])->assertStatus(200);
+
+        $this->withAuthenticatedUser($manager)->getJson('/api/tasks')
+            ->assertStatus(200)
+            ->assertJsonPath('data.0.status', 'In Progress');
+
+        $this->withAuthenticatedUser($admin)->getJson('/api/tasks')
+            ->assertStatus(200)
+            ->assertJsonPath('data.0.status', 'In Progress');
+    }
+
     private function withAuthenticatedUser(User $user)
     {
         $token = JWTAuth::fromUser($user);

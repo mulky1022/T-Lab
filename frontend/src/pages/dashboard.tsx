@@ -438,11 +438,11 @@ export function Dashboard() {
                   
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-maintext truncate">
-                        <span className="font-medium">{actor?.name}</span>{' '}
-                        {log.action.toLowerCase()}
+                        <span className="font-medium">{actor?.name || 'System'}</span>{' '}
+                        {(log.action ? log.action.toLowerCase() : 'updated')}
                       </p>
                       <p className="text-xs text-secondary truncate">
-                        {log.target} · {log.timestamp}
+                        {log.target || 'Activity'} · {log.timestamp}
                       </p>
                     </div>
                   </div>);

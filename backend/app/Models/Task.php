@@ -24,6 +24,12 @@ class Task extends Model
         'due_date' => 'date:Y-m-d',
     ];
 
+    protected $appends = [
+        'projectId',
+        'assigneeId',
+        'dueDate',
+    ];
+
     public function project()
     {
         return $this->belongsTo(Project::class);
@@ -42,5 +48,30 @@ class Task extends Model
     public function allComments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function getProjectIdAttribute()
+    {
+        return $this->attributes['project_id'] ?? null;
+    }
+
+    public function getAssigneeIdAttribute()
+    {
+        return $this->attributes['assignee_id'] ?? null;
+    }
+
+    public function getDueDateAttribute($value)
+    {
+        $rawValue = $value ?? $this->attributes['due_date'] ?? null;
+
+        if ($rawValue instanceof \DateTimeInterface) {
+            return $rawValue->format('Y-m-d');
+        }
+
+        if (is_string($rawValue) && $rawValue !== '') {
+            return date('Y-m-d', strtotime($rawValue));
+        }
+
+        return null;
     }
 }

@@ -62,10 +62,11 @@ export function Projects() {
     };
   }, [query, status, setProjects]);
 
-  let list = isMember ?
-  projects.filter((p) => p.memberIds.includes(currentUser!.id)) :
-  projects;
-  list = list.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+  const visibleProjects = isMember
+    ? projects.filter((p) => p.memberIds.includes(currentUser!.id) || p.managerId === currentUser!.id)
+    : projects;
+
+  let list = visibleProjects.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
   if (status !== 'All') list = list.filter((p) => p.status === status);
   return (
     <div>
