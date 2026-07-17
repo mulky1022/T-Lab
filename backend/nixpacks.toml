@@ -1,20 +1,15 @@
 [phases.setup]
-nixPkgs = ["php84", "php84Packages.composer", "php84Extensions.pgsql", "php84Extensions.pdo_pgsql", "nodejs_22", "npm"]
+nixpkgs = ["php84", "php84Packages.composer", "nodejs", "postgresql"]
 
 [phases.build]
-cmds = [
-    "composer install --no-dev --optimize-autoloader",
-    "npm install",
-    "npm run build"
-]
+cmds = ["composer install --no-progress --no-interaction", "npm ci", "npm run build"]
 
-# During build, Laravel must NOT touch the database.
-# These env vars override Railway Variables for the build phase only.
 [phases.build.variables]
+# Use non-database drivers during build to avoid hitting PostgreSQL before migrations
 CACHE_STORE = "array"
 SESSION_DRIVER = "array"
 QUEUE_CONNECTION = "sync"
 DB_CONNECTION = "sqlite"
 
-[start]
-cmd = "php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+[phases.start]
+cmd = "php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=8080"
