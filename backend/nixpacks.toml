@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["php84", "php84Packages.composer", "php84Extensions.pgsql", "php84Extensions.pdo_pgsql", "nodejs_22", "npm"]
+nixPkgs = ["php84", "php84Packages.composer", "php84Extensions.pgsql", "php84Extensions.pdo_pgsql", "nodejs_22"]
 
 [phases.build]
 cmds = [
