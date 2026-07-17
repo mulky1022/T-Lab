@@ -1,0 +1,12 @@
+node_modules
+vendor
+storage
+bootstrap/cache
+.env
+.env.*
+composer.lock
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.git
