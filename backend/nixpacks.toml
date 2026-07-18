@@ -30,4 +30,4 @@ APP_KEY = "base64:XG8d4Q2yZ3m7cK9+F1pG4wU7bY2+V8wQ6mN1rO8eT+I="
 JWT_SECRET = "dummy_jwt_secret_for_build"
 
 [start]
-cmd = "php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+cmd = "php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
