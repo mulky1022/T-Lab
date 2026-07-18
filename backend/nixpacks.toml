@@ -9,6 +9,16 @@ cmds = [
     "npm run build"
 ]
 
+# During install, composer's post-autoload-dump runs `php artisan package:discover`.
+# These env vars ensure no real DB connection is attempted at that stage.
+[phases.install.variables]
+CACHE_STORE = "array"
+SESSION_DRIVER = "array"
+QUEUE_CONNECTION = "sync"
+DB_CONNECTION = "sqlite"
+APP_KEY = "base64:XG8d4Q2yZ3m7cK9+F1pG4wU7bY2+V8wQ6mN1rO8eT+I="
+JWT_SECRET = "dummy_jwt_secret_for_build"
+
 # During build, Laravel must NOT touch the database.
 # These env vars override Railway Variables for the build phase only.
 [phases.build.variables]

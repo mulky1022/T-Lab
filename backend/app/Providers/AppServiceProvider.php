@@ -31,7 +31,8 @@ class AppServiceProvider extends ServiceProvider
             }
         } catch (\Throwable $exception) {
             fwrite(STDERR, sprintf("❌ Database connection failed: %s\n", $exception->getMessage()));
-            throw $exception;
+            // Do not re-throw: artisan commands (e.g. package:discover during composer
+            // post-autoload-dump) must be able to run without a live DB connection.
         }
     }
 }
