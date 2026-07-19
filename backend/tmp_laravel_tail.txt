@@ -1,0 +1,80 @@
+﻿#15 E:/T Lab/T-Lab/backend/public/index.php(20): Illuminate/Foundation/Application->handleRequest()
+#16 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#17 {main}
+"} 
+[2026-07-15 23:19:44] local.ERROR: Undefined constant "App\Providers\STDERR" {"exception":"[object] (Error(code: 0): Undefined constant \"App\\Providers\\STDERR\" at E:/T Lab/T-Lab/backend/app/Providers/AppServiceProvider.php:33)
+[stacktrace]
+#0 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App/Providers/AppServiceProvider->boot()
+#1 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::{closure:Illuminate/Container/BoundMethod::call():35}()
+#2 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate/Container/Util::unwrapIfClosure()
+#3 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod()
+#4 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate/Container/BoundMethod::call()
+#5 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1151): Illuminate/Container/Container->call()
+#6 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1132): Illuminate/Foundation/Application->bootProvider()
+#7 [internal function]: Illuminate/Foundation/Application->{closure:Illuminate/Foundation/Application::boot():1131}()
+#8 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1131): array_walk()
+#9 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate/Foundation/Application->boot()
+#10 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(342): Illuminate/Foundation/Bootstrap/BootProviders->bootstrap()
+#11 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(186): Illuminate/Foundation/Application->bootstrapWith()
+#12 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(170): Illuminate/Foundation/Http/Kernel->bootstrap()
+#13 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter()
+#14 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1220): Illuminate/Foundation/Http/Kernel->handle()
+#15 E:/T Lab/T-Lab/backend/public/index.php(20): Illuminate/Foundation/Application->handleRequest()
+#16 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#17 {main}
+"} 
+[2026-07-15 23:20:37] local.ERROR: Undefined constant "App\Providers\STDERR" {"exception":"[object] (Error(code: 0): Undefined constant \"App\\Providers\\STDERR\" at E:/T Lab/T-Lab/backend/app/Providers/AppServiceProvider.php:33)
+[stacktrace]
+#0 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App/Providers/AppServiceProvider->boot()
+#1 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::{closure:Illuminate/Container/BoundMethod::call():35}()
+#2 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate/Container/Util::unwrapIfClosure()
+#3 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod()
+#4 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate/Container/BoundMethod::call()
+#5 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1151): Illuminate/Container/Container->call()
+#6 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1132): Illuminate/Foundation/Application->bootProvider()
+#7 [internal function]: Illuminate/Foundation/Application->{closure:Illuminate/Foundation/Application::boot():1131}()
+#8 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1131): array_walk()
+#9 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate/Foundation/Application->boot()
+#10 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(342): Illuminate/Foundation/Bootstrap/BootProviders->bootstrap()
+#11 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(186): Illuminate/Foundation/Application->bootstrapWith()
+#12 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(170): Illuminate/Foundation/Http/Kernel->bootstrap()
+#13 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter()
+#14 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1220): Illuminate/Foundation/Http/Kernel->handle()
+#15 E:/T Lab/T-Lab/backend/public/index.php(20): Illuminate/Foundation/Application->handleRequest()
+#16 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#17 {main}
+"} 
+[2026-07-16 07:23:15] local.ERROR: OpenRouter assistant request error. {"user_id":1,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:23:20] local.ERROR: OpenRouter assistant request error. {"user_id":3,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:23:21] local.ERROR: OpenRouter assistant request error. {"user_id":4,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:23:48] local.ERROR: OpenRouter assistant request error. {"user_id":1,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:23:49] local.ERROR: OpenRouter assistant request error. {"user_id":3,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:23:52] local.ERROR: OpenRouter assistant request error. {"user_id":4,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:24:32] local.ERROR: OpenRouter assistant request error. {"user_id":1,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:24:40] local.ERROR: OpenRouter assistant request error. {"user_id":3,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 07:24:45] local.ERROR: OpenRouter assistant request error. {"user_id":4,"message":"cURL error 60: SSL certificate OpenSSL verify result: unable to get local issuer certificate (20) (see https://curl.se/libcurl/c/libcurl-errors.html) for https://openrouter.ai/api/v1/chat/completions"} 
+[2026-07-16 08:05:06] local.ERROR: Maximum execution time of 30 seconds exceeded {"userId":1,"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Maximum execution time of 30 seconds exceeded at E:/T Lab/T-Lab/backend/vendor/guzzlehttp/guzzle/src/Handler/CurlHandler.php:78)
+[stacktrace]
+#0 {main}
+"} 
+[2026-07-16 08:11:39] local.ERROR: Undefined constant "App\Providers\STDERR" {"exception":"[object] (Error(code: 0): Undefined constant \"App\\Providers\\STDERR\" at E:/T Lab/T-Lab/backend/app/Providers/AppServiceProvider.php:33)
+[stacktrace]
+#0 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App/Providers/AppServiceProvider->boot()
+#1 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::{closure:Illuminate/Container/BoundMethod::call():35}()
+#2 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate/Container/Util::unwrapIfClosure()
+#3 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod()
+#4 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate/Container/BoundMethod::call()
+#5 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1151): Illuminate/Container/Container->call()
+#6 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1132): Illuminate/Foundation/Application->bootProvider()
+#7 [internal function]: Illuminate/Foundation/Application->{closure:Illuminate/Foundation/Application::boot():1131}()
+#8 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1131): array_walk()
+#9 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate/Foundation/Application->boot()
+#10 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(342): Illuminate/Foundation/Bootstrap/BootProviders->bootstrap()
+#11 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(186): Illuminate/Foundation/Application->bootstrapWith()
+#12 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(170): Illuminate/Foundation/Http/Kernel->bootstrap()
+#13 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter()
+#14 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1220): Illuminate/Foundation/Http/Kernel->handle()
+#15 E:/T Lab/T-Lab/backend/public/index.php(20): Illuminate/Foundation/Application->handleRequest()
+#16 E:/T Lab/T-Lab/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#17 {main}
+"} 
